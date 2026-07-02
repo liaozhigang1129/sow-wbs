@@ -1,0 +1,37 @@
+{
+  "name": "sow-wbs-system",
+  "version": "1.0.0",
+  "description": "SOW文档导入 → AI自动生成 WBS 工作分解结构 (基于 pmo-wbs-generator v2.3)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:server": "node server/src/index.js",
+    "dev:client": "vite",
+    "dev": "concurrently -k -n SERVER,CLIENT -c blue,green \"npm run dev:server\" \"npm run dev:client\"",
+    "build:client": "vite build",
+    "start": "npm run build:client && node server/src/index.js",
+    "install:all": "npm install && cd client && npm install"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "docx": "^9.0.2",
+    "docx-preview": "^0.3.7",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.1",
+    "mammoth": "^1.8.0",
+    "marked": "^14.1.3",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^5.0.7",
+    "node-fetch": "^3.3.2",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.1",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.10"
+  }
+}

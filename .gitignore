@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.DS_Store
+*.log
+server/uploads/*
+client/src/App.jsx.tmp
+client/src/components/load_resource
+client/debug-*.js
+
+# Test sample files (regeneratable)
+public/test_sow.docx
+public/test_sow.pdf
+
+# Local env overrides
+.env.local
