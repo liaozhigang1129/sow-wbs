@@ -1,5 +1,11 @@
 # SOW → WBS 工作分解系统
 
+[![GitHub release (latest by tag)](https://img.shields.io/github/v/tag/liaozhigang1129/sow-wbs?label=release&sort=semver)](https://github.com/liaozhigang1129/sow-wbs/releases)
+[![Docker Image](https://img.shields.io/badge/docker-ghcr.io%2Fliaozhigang1129%2Fsow--ws-blue?logo=docker)](https://github.com/liaozhigang1129/sow-wbs/pkgs/container/sow-wbs)
+[![CI](https://img.shields.io/github/actions/workflow/status/liaozhigang1129/sow-wbs/docker-publish.yml?label=build&logo=githubactions)](https://github.com/liaozhigang1129/sow-wbs/actions)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Node 20+](https://img.shields.io/badge/node-20%2B-339933?logo=node.js)](https://nodejs.org)
+
 > 基于 **WBS Master Prompt v2.3** 的智能 WBS 分解 Web 系统。
 > 导入 SOW（Word/PDF/文本/Markdown）→ AI 自动生成 MECE 工作分解结构 → 工时守恒 + 命名规范自动校验 → 多格式导出。
 
