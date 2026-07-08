@@ -126,7 +126,17 @@ export async function exportXlsx(wbs) {
         fgColor: { argb: 'FFFFFBEB' },
       };
     }
+    // 启用 Excel 分组大纲（可折叠层级）：L1 留 0 级，L2 → 1 级，L3 → 2 级...
+    // 仅对非 L1 行设置大纲级别，且要忽略子节点都为叶子的情况
+    if (r.level >= 1) {
+      sheetRow.outlineLevel = Math.max(0, r.level - 1);
+    }
   });
+  // 大纲设置：摘要行在下方，启用折叠按钮
+  sheet1.properties.outlineProperties = {
+    summaryBelow: true,
+    summaryRight: true,
+  };
   sheet1.views = [{ state: 'frozen', ySplit: 1 }];
 
   // Sheet 2: 项目 Meta
