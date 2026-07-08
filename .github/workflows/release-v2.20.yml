@@ -1,0 +1,55 @@
+name: Release v2.20
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release v2.20
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.20
+          name: "v2.20 — hexai 兜底 LLM + Docker 部署"
+          generate_release_notes: false
+          draft: false
+          prerelease: false
+          body: |
+            ## v2.20 — hexai 兜底 LLM + Docker 部署
+
+            发布日期：2026-07-08
+
+            ### 🛡️ 兜底 LLM
+
+            - 新增 `GET /api/llm-default`：返回系统默认配置（**绝不返回 apiKey 明文**）
+            - 后端 `__system_default__` 占位符 + env 自动 fallback
+              （`generate.js` / `expandL3.js` / `llm.js#testLLM`）
+            - 前端 `AIConfig` 面板：「系统兜底 LLM」卡片 + 一键应用按钮
+            - 顶部 badge「🛡️ 兜底 \<model\>」在用户未配 key 时自动出现
+            - `onGenerate` 在无 key 时不再报错，静默使用兜底
+
+            ### 🐳 Docker 部署
+
+            - 多阶段 `Dockerfile`：`node:20-alpine` + `tini` + `curl` 健康检查
+            - `docker-compose.yml` 包含 healthcheck + 端口映射 + env 注入
+            - `.env.docker.example` 模板（含 hexai 兜底配置）
+            - `DOCKER.md` 部署 / 升级 / 故障排查指南
+
+            ### 📚 文档
+
+            - `README.md` 顶部新增 5 个徽章（release / docker / ci / license / node）
+            - `LICENSE`（MIT）
+            - `CHANGELOG.md`（Keep a Changelog 规范）
+
+            ### 📦 Docker 镜像
+
+            ```bash
+            docker pull ghcr.io/liaozhigang1129/sow-wbs:v2.20
+            docker pull ghcr.io/liaozhigang1129/sow-wbs:latest
+            ```
+
+            多架构：`linux/amd64` + `linux/arm64`，含 provenance + SBOM。
