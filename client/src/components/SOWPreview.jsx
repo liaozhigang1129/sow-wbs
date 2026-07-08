@@ -1,8 +1,10 @@
-// SOW 文档预览面板（v2.13）
+// SOW 文档预览面板（v2.18）
 // - 支持 PDF（iframe）/ DOCX（docx-preview + 浮动高亮面板）/ TXT/MD（带高亮文本）
 // - 新增：面板折叠/展开（节省屏幕空间）
 // - 新增：DOCX/PDF 高亮定位面板（基于已解析的纯文本 + 关键词提取）
 // - 新增：明显的视觉高亮（黄色背景 + 自动滚动 + 临时聚焦）
+// - 新增：文字缩放控件 A-/A/A+（仅 txt/md），DOCX/PDF 用浏览器内置缩放（Ctrl+滚轮亦可）
+// - 修复：docx 容器需要 flex 撑满、SOW 预览面板需要明确高度
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { renderAsync as renderDocx } from 'docx-preview';
 
@@ -35,20 +37,17 @@ function getDocType(file) {
 function parseSowEvidence(evidence) {
   if (!evidence) return { section: '', keywords: [] };
   const result = { section: '', keywords: [] };
-  // 用全角竖线「｜」或半角「|」分割
   const parts = evidence.split(/[｜|]/).map((p) => p.trim()).filter(Boolean);
   if (parts.length === 0) return result;
-  // 第一段若是章节号（如 "3.2 节" / "2.1.1" / "1"）
   const sectionMatch = parts[0].match(/^(\d+(?:\.\d+)*)(?:\s*节)?$/);
   if (sectionMatch) {
-    result.section = sectionMatch[1]; // "3.2"
+    result.section = sectionMatch[1];
     result.keywords = parts.slice(1)
-      .join('｜') // 防止误把后半段再切
+      .join('｜')
       .split(/[、,，;；\s]+/)
       .map((k) => k.trim())
       .filter((k) => k.length >= 2);
   } else {
-    // 没有章节号，全部当作关键词
     result.keywords = evidence.split(/[、,，;；\s]+/).map((k) => k.trim()).filter((k) => k.length >= 2);
   }
   return result;
@@ -56,16 +55,12 @@ function parseSowEvidence(evidence) {
 
 /**
  * 在原文中查找 sowEvidence 的所有出现位置
- * 1) 先用 keywords 在原文中 indexOf
- * 2) 找不到再用章节号 "X.Y" 匹配（如 "3.2" → "3.2 业务目标"）
- * 3) 都找不到则降级为模糊匹配
  */
 function findEvidenceContext(text, sowEvidence, contextChars = 60) {
   if (!text || !sowEvidence) return [];
   const { section, keywords } = parseSowEvidence(sowEvidence);
   const results = [];
 
-  // 1) 优先：关键词 indexOf
   const sortedKw = [...keywords].sort((a, b) => b.length - a.length);
   for (const kw of sortedKw) {
     let searchFrom = 0;
@@ -90,7 +85,6 @@ function findEvidenceContext(text, sowEvidence, contextChars = 60) {
     if (results.length >= 5) break;
   }
 
-  // 2) 兜底：用章节号 "X.Y" 在原文中找（如 "3.2" 紧跟中文/数字）
   if (results.length === 0 && section) {
     const sectionPattern = new RegExp(`(${section})\\s*[\\.、]?\\s*([^\\n]{0,80})`, 'g');
     let m;
@@ -113,7 +107,6 @@ function findEvidenceContext(text, sowEvidence, contextChars = 60) {
     }
   }
 
-  // 3) 终极降级：取文本前 200 字符当 context
   if (results.length === 0 && text.length > 0) {
     results.push({
       keyword: '(无定位结果)',
@@ -125,44 +118,43 @@ function findEvidenceContext(text, sowEvidence, contextChars = 60) {
     });
   }
 
-  // 按位置排序
   results.sort((a, b) => a.index - b.index);
   return results;
 }
 
-/**
- * 提取「可在 txt/md 文本中高亮的关键词列表」
- * 优先 keywords，没有则用整段 evidence
- */
 function extractHighlightKeywords(sowEvidence) {
   if (!sowEvidence) return '';
   const { keywords } = parseSowEvidence(sowEvidence);
   if (keywords.length > 0) return keywords.join('|');
-  // 旧格式：直接把 "3.2 节" 当作关键词也大概率匹配不到，return 空走浮动面板
   return '';
 }
 
+// 文字缩放档位（基于根字号倍率）
+const FONT_SCALES = [
+  { label: 'A-', value: 0.85 },
+  { label: 'A', value: 1.0 },
+  { label: 'A+', value: 1.2 },
+  { label: 'A++', value: 1.5 },
+];
+
 /**
  * SOW 文档预览组件
- * @param {object} file - { name, size, mimetype, base64 }
- * @param {string} text - 解析后的纯文本（用于高亮定位）
- * @param {string} highlightText - 需要高亮的文本片段
  */
 export default function SOWPreview({ file, text, highlightText, paragraphs = [] }) {
   const docType = getDocType(file);
   const textRef = useRef(null);
   const lastHighlightRef = useRef('');
 
-  // ⭐ 面板折叠状态（默认展开）
   const [collapsed, setCollapsed] = useState(false);
+  // ⭐ v2.18: 文字缩放档位（仅 txt/md 生效）
+  const [fontScaleIdx, setFontScaleIdx] = useState(1); // 默认 A
+  const fontScale = FONT_SCALES[fontScaleIdx].value;
 
-  // 文档 dataURL（用于 PDF/Word 内嵌预览）
   const dataUrl = useMemo(() => {
     if (!file?.base64) return '';
     return `data:${file.mimetype};base64,${file.base64}`;
   }, [file]);
 
-  // DOCX 渲染：将 base64 转 ArrayBuffer 后用 docx-preview 渲染到容器
   const docxContainerRef = useRef(null);
   const [docxError, setDocxError] = useState('');
 
@@ -198,14 +190,11 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
     }
   }, [file, docType]);
 
-  // ⭐ v2.14: DOCX 段落级高亮
-  // docx-preview 渲染后，给每个 <p> 元素加 data-paragraph-idx
-  // 然后根据 sowEvidence 的 keywords 在 paragraphs[] 中找到匹配段，标黄 + 滚动
+  // 段落级高亮
   useEffect(() => {
     if (docType !== 'docx' || !highlightText || paragraphs.length === 0) return;
     if (!docxContainerRef.current) return;
 
-    // 等 docx-preview 渲染完成（最多 2 秒）
     const tryHighlight = (attempt = 0) => {
       const container = docxContainerRef.current;
       if (!container) return;
@@ -215,25 +204,41 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
         return;
       }
 
-      // 1) 给段落打 idx 标记
       paraElements.forEach((el, i) => {
         el.setAttribute('data-paragraph-idx', i);
         el.style.transition = 'background-color 0.4s';
       });
 
-      // 2) 解析 sowEvidence 拿关键词
-      const { keywords } = parseSowEvidence(highlightText);
-      if (keywords.length === 0) return;
-
-      // 3) 在 paragraphs 数组中找匹配段
+      const { keywords, section } = parseSowEvidence(highlightText);
       const matchedIdxs = new Set();
+      const matchedNotes = [];
+
       paragraphs.forEach((p) => {
-        if (keywords.some((kw) => p.text && p.text.includes(kw))) {
+        const text = (p.text || '').trim();
+        if (!text) return;
+        if (keywords.length > 0 && keywords.some((kw) => text.includes(kw))) {
           matchedIdxs.add(p.idx);
+          matchedNotes.push(`[${p.idx}] 关键词命中: ${keywords.find((kw) => text.includes(kw))}`);
+          return;
+        }
+        if (section) {
+          const sectionParts = section.split('.');
+          for (let i = sectionParts.length; i > 0; i--) {
+            const candidate = sectionParts.slice(0, i).join('.');
+            const pattern = new RegExp(`^${candidate.replace(/\./g, '\\.')}[\\.\\s、，]?`);
+            if (pattern.test(text)) {
+              matchedIdxs.add(p.idx);
+              matchedNotes.push(`[${p.idx}] 章节号降级命中: '${candidate}' (原 '${section}')`);
+              break;
+            }
+          }
         }
       });
 
-      // 4) 给匹配的段落加黄色高亮
+      if (matchedNotes.length > 0) {
+        console.log('[SOWPreview 段落定位]', { sowEvidence: highlightText, section, keywords, matches: matchedNotes });
+      }
+
       let firstMatched = null;
       paraElements.forEach((el) => {
         const idx = parseInt(el.getAttribute('data-paragraph-idx') || '-1', 10);
@@ -247,7 +252,6 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
         }
       });
 
-      // 5) 滚动到第一个匹配段
       if (firstMatched) {
         setTimeout(() => {
           firstMatched.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -255,11 +259,10 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
       }
     };
 
-    // 等 docx-preview 异步渲染完成后再尝试
     setTimeout(() => tryHighlight(0), 200);
   }, [highlightText, docType, paragraphs, file]);
 
-  // 高亮定位：滚动到匹配位置（txt/md 走 mark + scrollIntoView）
+  // txt/md 高亮
   useEffect(() => {
     if (!highlightText || !textRef.current) return;
     if (docType === 'pdf' || docType === 'docx') return;
@@ -278,7 +281,6 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
     }, 80);
   }, [highlightText, docType]);
 
-  // ⭐ DOCX/PDF 的证据上下文（用于浮动高亮面板）
   const evidenceContexts = useMemo(() => {
     if (
       (docType === 'docx' || docType === 'doc' || docType === 'pdf') &&
@@ -290,27 +292,27 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
     return [];
   }, [text, highlightText, docType]);
 
-  // 渲染带高亮的文本内容（用于 txt/md）
-  // ⭐ v2.14 增强：用 parseSowEvidence 拆出 keywords 后做多关键词高亮
-  //   - 旧格式 highlightText="3.2 节" → keywords=[] → 退化为整串 indexOf
-  //   - 新格式 highlightText="3.2 节｜客户访谈" → keywords=["客户访谈"] → 高亮关键词
+  // ⭐ 渲染带高亮的文本（应用 fontScale）
   const renderHighlightedText = () => {
+    const baseStyle = {
+      fontSize: `${12 * fontScale}px`, // 原 css 是 text-xs (12px) 为基准
+      lineHeight: 1.6,
+    };
+
     if (!text) {
       return <div className="text-slate-400 italic p-4">无文本内容</div>;
     }
     if (!highlightText) {
-      return <div className="whitespace-pre-wrap break-words">{text}</div>;
+      return <div className="whitespace-pre-wrap break-words" style={baseStyle}>{text}</div>;
     }
 
-    // 提取可定位的关键词
     const highlightKw = extractHighlightKeywords(highlightText);
     if (!highlightKw) {
-      // 旧格式：尝试整串匹配
       const escaped = highlightText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`(${escaped})`, 'gi');
       const parts = text.split(regex);
       return (
-        <div className="whitespace-pre-wrap break-words">
+        <div className="whitespace-pre-wrap break-words" style={baseStyle}>
           {parts.map((part, i) => {
             const isMatch = part.toLowerCase() === highlightText.toLowerCase();
             if (isMatch) {
@@ -334,17 +336,14 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
       );
     }
 
-    // ⭐ 新格式：多关键词高亮
-    // 用 | 分隔的多个关键词，构造一个全局正则（按长度倒序避免短词先匹配）
     const kwList = highlightKw.split('|').filter(Boolean);
     const escapedList = kwList.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-    // 按长度倒序排列 + 用 | 连接
     escapedList.sort((a, b) => b.length - a.length);
     const combinedRegex = new RegExp(`(${escapedList.join('|')})`, 'gi');
     const parts = text.split(combinedRegex);
 
     return (
-      <div className="whitespace-pre-wrap break-words">
+      <div className="whitespace-pre-wrap break-words" style={baseStyle}>
         {parts.map((part, i) => {
           const matched = kwList.some(
             (k) => k.toLowerCase() === part.toLowerCase()
@@ -370,10 +369,35 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
     );
   };
 
+  // 缩放控件（仅 txt/md 显示）
+  const FontScaleControl = () => (
+    <div className="flex items-center gap-0.5 border border-slate-200 rounded-md overflow-hidden">
+      {FONT_SCALES.map((s, i) => (
+        <button
+          key={s.label}
+          onClick={() => setFontScaleIdx(i)}
+          disabled={docType !== 'txt' && docType !== 'md' && docType !== 'unknown'}
+          className={`px-1.5 py-0.5 text-[11px] font-mono transition-colors ${
+            i === fontScaleIdx
+              ? 'bg-brand-600 text-white'
+              : 'bg-white text-slate-600 hover:bg-slate-100'
+          } ${(docType !== 'txt' && docType !== 'md' && docType !== 'unknown') ? 'opacity-40 cursor-not-allowed' : ''}`}
+          title={
+            docType === 'txt' || docType === 'md' || docType === 'unknown'
+              ? `缩放档位 ${s.label} (${Math.round(s.value * 100)}%)`
+              : '仅文本类文档支持缩放，PDF/Word 请用 Ctrl+滚轮'
+          }
+        >
+          {s.label}
+        </button>
+      ))}
+    </div>
+  );
+
   // 无文件
   if (!file) {
     return (
-      <div className="card p-4 h-full flex items-center justify-center min-h-[400px]">
+      <div className="card p-4 h-full flex flex-col items-center justify-center min-h-0 overflow-hidden">
         <div className="text-center text-slate-400">
           <div className="text-5xl mb-3">📄</div>
           <div className="text-sm">尚未上传 SOW 文档</div>
@@ -383,10 +407,10 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
     );
   }
 
-  // ⭐ 折叠态：只显示紧凑头部（节省屏幕空间，让 WBS 占主视觉）
+  // 折叠态
   if (collapsed) {
     return (
-      <div className="card p-0 h-full flex flex-col overflow-hidden">
+      <div className="card p-0 h-full flex flex-col overflow-hidden min-h-0">
         <div
           className="px-3 py-2 bg-slate-50 border-b flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors"
           onClick={() => setCollapsed(false)}
@@ -448,8 +472,8 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
 
   // 展开态：完整预览
   return (
-    <div className="card p-0 h-full flex flex-col overflow-hidden">
-      {/* 文档头部（带折叠按钮） */}
+    <div className="card p-0 h-full flex flex-col overflow-hidden min-h-0">
+      {/* 文档头部 */}
       <div className="px-4 py-2 border-b bg-slate-50 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-lg">
@@ -476,6 +500,8 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
+          {/* ⭐ 文字缩放控件 */}
+          <FontScaleControl />
           {dataUrl && (
             <a
               href={dataUrl}
@@ -496,14 +522,13 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
         </div>
       </div>
 
-      {/* 文档内容区 */}
-      <div className="flex-1 overflow-hidden bg-white relative">
+      {/* 文档内容区 ⭐ 修复：用 flex-1 + min-h-0 让子容器能拿到高度 */}
+      <div className="flex-1 min-h-0 overflow-hidden bg-white relative">
         {docType === 'pdf' && (
           <iframe
             src={dataUrl + '#toolbar=1&navpanes=0&scrollbar=1'}
-            className="w-full h-full border-0"
+            className="w-full h-full border-0 block"
             title={file.name}
-            style={{ minHeight: '500px' }}
           />
         )}
 
@@ -526,7 +551,7 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
               <div
                 ref={docxContainerRef}
                 className="docx-container bg-white shadow-md mx-auto"
-                style={{ minHeight: '500px', maxWidth: '900px' }}
+                style={{ minHeight: '500px', maxWidth: '900px', height: '100%' }}
               />
             )}
           </div>
@@ -535,13 +560,12 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
         {(docType === 'md' || docType === 'txt' || docType === 'unknown') && (
           <div
             ref={textRef}
-            className="p-4 h-full overflow-y-auto font-mono text-xs leading-relaxed text-slate-700"
+            className="p-4 h-full overflow-y-auto font-mono text-slate-700"
           >
             {renderHighlightedText()}
           </div>
         )}
 
-        {/* ⭐ DOCX/PDF 高亮定位浮动面板 */}
         {highlightText &&
           (docType === 'docx' || docType === 'doc' || docType === 'pdf') &&
           evidenceContexts.length > 0 && (
@@ -585,7 +609,6 @@ export default function SOWPreview({ file, text, highlightText, paragraphs = [] 
           )}
       </div>
 
-      {/* 底部状态栏 */}
       {highlightText && (
         <div className="px-3 py-1.5 bg-amber-50 border-t border-amber-200 flex-shrink-0">
           <div className="text-[10px] text-amber-800 flex items-center gap-1.5">

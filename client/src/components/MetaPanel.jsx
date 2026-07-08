@@ -13,7 +13,7 @@ export default function MetaPanel({ wbs, audit }) {
   const meta = wbs.meta || {};
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {audit?.parseWarning && (
         <div className="card p-4 border-amber-300 bg-amber-50">
           <h3 className="font-semibold mb-1 flex items-center gap-2 text-amber-800">
@@ -36,7 +36,7 @@ export default function MetaPanel({ wbs, audit }) {
         </div>
       )}
       {meta && Object.keys(meta).length > 0 && (
-        <div className="card p-4">
+        <div className="card p-3">
           <h3 className="font-semibold mb-3 flex items-center gap-2">📋 项目概览</h3>
           <div className="grid grid-cols-2 gap-3 text-sm">
             {meta.project && (
@@ -136,7 +136,7 @@ export default function MetaPanel({ wbs, audit }) {
       )}
 
       {Array.isArray(wbs.risks) && wbs.risks.length > 0 && (
-        <div className="card p-4">
+        <div className="card p-3">
           <h3 className="font-semibold mb-3 flex items-center gap-2">⚡ 风险列表 ({wbs.risks.length})</h3>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {wbs.risks.map((r, i) => (

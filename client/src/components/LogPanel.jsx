@@ -87,10 +87,10 @@ export default function LogPanel({ log }) {
   };
 
   return (
-    <div className="card p-4">
+    <div className="card p-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <button
-          className="flex items-center gap-2 font-semibold text-left flex-1 min-w-0"
+          className="flex items-center gap-2 font-semibold text-left flex-1 min-w-0 text-sm"
           onClick={() => setOpen(!open)}
         >
           <span>📋 生成流程日志</span>
@@ -137,7 +137,7 @@ export default function LogPanel({ log }) {
       </div>
 
       {open && (
-        <div className="mt-3 max-h-[28rem] overflow-y-auto rounded-md bg-slate-900 text-slate-100 text-xs font-mono border border-slate-700">
+        <div className="mt-2 max-h-64 overflow-y-auto rounded-md bg-slate-900 text-slate-100 text-xs font-mono border border-slate-700">
           {filtered.length === 0 && (
             <div className="px-3 py-6 text-center text-slate-400">该级别无日志</div>
           )}

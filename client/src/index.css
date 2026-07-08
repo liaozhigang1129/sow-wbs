@@ -55,6 +55,28 @@
   @apply bg-slate-400;
 }
 
+/* ⭐ v2.18 布局优化：让主区域填满视口、三列等高、滚动条下沉到子模块 */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+body {
+  overflow: hidden; /* 主滚动条交给主区域内的子模块 */
+}
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* SOW 文档预览的 docx/pdf 容器：滚动条放在子模块而不是外层 */
+.docx-container {
+  height: 100%;
+  overflow: auto;
+}
+.docx-container iframe {
+  height: 100% !important;
+}
+
 /* ⭐ SOW 证据定位闪烁动画（仅播一次） */
 @keyframes sow-pulse {
   0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); transform: scale(0.98); }

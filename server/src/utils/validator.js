@@ -24,6 +24,69 @@ const PROCESS_NOUNS = [
 const STAGE_TERMS = ['评审', '基线', '签字', '定义', '规划', '选型', '测试', '演示', '部署', '上线', '验收', '移交', '评估', '决策', '管理'];
 
 /**
+ * ⭐ v2.16 新增：计算两个名称的语义重合度（v2 改进算法）
+ * 用于检测同一父节点下 L3 工作包语义是否重合
+ *
+ * 算法：
+ *   1. 提取 2-gram + 3-gram 中文关键词（过滤停用词）
+ *   2. 子串包含检查（A 包含 B 或 B 包含 A → 视为重合）
+ *   3. 计算 "包含率" = 交集 / min(|A|, |B|)
+ *   4. 阈值 ≥ 0.5 视为重合
+ */
+function computeNameOverlap(nameA, nameB) {
+  if (!nameA || !nameB) return 0;
+  if (nameA === nameB) return 1;
+
+  // 停用词（虚词、连接词、量词、常见后缀）
+  const STOPWORDS = new Set([
+    '的', '与', '和', '及', '或', '等', '进行', '完成', '相关',
+    '总体', '整体', '系统', '项目', '工作', '报告', '文档',
+    '纪要', '方案', '模板', '规范', '工具', '服务', '平台',
+  ]);
+
+  // 提取关键词（中文 2-gram + 3-gram，英文按单词）
+  function tokenize(name) {
+    const tokens = [];
+    const cn = name.match(/[\u4e00-\u9fa5]+/g) || [];
+    for (const seg of cn) {
+      for (let i = 0; i < seg.length - 1; i++) {
+        const t = seg.slice(i, i + 2);
+        if (!STOPWORDS.has(t)) tokens.push(t);
+      }
+      // 3-gram 更精确
+      for (let i = 0; i < seg.length - 2; i++) {
+        const t = seg.slice(i, i + 3);
+        if (!STOPWORDS.has(t)) tokens.push(t);
+      }
+    }
+    const en = name.match(/[A-Za-z0-9]+/g) || [];
+    for (const t of en) {
+      if (t.length >= 2 && !STOPWORDS.has(t.toLowerCase())) tokens.push(t.toLowerCase());
+    }
+    return tokens;
+  }
+
+  const setA = new Set(tokenize(nameA));
+  const setB = new Set(tokenize(nameB));
+
+  if (setA.size === 0 || setB.size === 0) return 0;
+
+  let intersection = 0;
+  for (const t of setA) if (setB.has(t)) intersection++;
+  const min = Math.min(setA.size, setB.size);
+
+  // "包含率"：较小集合被较大集合覆盖的程度
+  const containment = intersection / min;
+
+  // 子串包含：例如 "需求调研" 是 "需求调研与访谈" 的子串 → 直接判定重合
+  if (nameA.includes(nameB) || nameB.includes(nameA)) {
+    return Math.max(containment, 0.5);
+  }
+
+  return containment;
+}
+
+/**
  * ⭐ v2.7 修复：兼容多种字段名
  * LLM 输出可能是 estimatedHours / hours / effortHours
  */
@@ -160,7 +223,7 @@ export function validateWBS(data) {
     wbsTree.forEach((root) => {
       const startPath = getCode(root);
       const startLevel = getLevel(root) || 1;
-      walkWithDepth(root, startPath, errors, warnings, stats, startLevel, 1);
+      walkWithDepth(root, startPath, errors, warnings, stats, startLevel, 1, null);
     });
   }
 
@@ -229,7 +292,7 @@ export function validateWBS(data) {
 /**
  * ⭐ v2.7 新增：带深度跟踪的 walk（用于统计 maxDepth 和 leaves）
  */
-function walkWithDepth(node, path, errors, warnings, stats, lvl, depth) {
+function walkWithDepth(node, path, errors, warnings, stats, lvl, depth, parentChildren = null) {
   const hours = getHours(node);
   const name = getName(node);
   const owner = getOwner(node);
@@ -251,8 +314,10 @@ function walkWithDepth(node, path, errors, warnings, stats, lvl, depth) {
   if (children.length === 0) {
     // 叶子
     stats.leaves += 1;
-    if (lvl > 0 && lvl < 4 && !isManagementNode(name)) {
-      errors.push(`[${path}] '${name}' 是 L${lvl} 叶子节点，必须下钻到 L4-L5`);
+    // ⭐ v2.16 弹性层级：L3 也可以作为叶子（不再强制要求 L4-L5）
+    // 只有 L1（阶段）和 L2（主要交付物）作为叶子时才报错
+    if (lvl > 0 && lvl < 3 && !isManagementNode(name)) {
+      errors.push(`[${path}] '${name}' 是 L${lvl} 叶子节点，阶段（L1）/主要交付物（L2）不应直接作为叶子，必须下钻`);
     }
     if (!node.deliverable && !isManagementNode(name)) {
       warnings.push(`[${path}] 叶子节点 '${name}' 缺少 deliverable 字段`);
@@ -265,6 +330,29 @@ function walkWithDepth(node, path, errors, warnings, stats, lvl, depth) {
     }
     if (hours <= 0) {
       errors.push(`[${path}] 叶子节点 '${name}' 工时必须 > 0`);
+    }
+
+    // ⭐ v2.16 防重合检查（叶子分支内）：L3 作为叶子时也要检查与同级重合
+    if (lvl === 3 && parentChildren && parentChildren.length > 1) {
+      for (const sib of parentChildren) {
+        if (sib === node) continue;
+        const sibName = getName(sib);
+        if (sibName === name) continue;
+        const overlap = computeNameOverlap(name, sibName);
+        if (overlap >= 0.5) {
+          errors.push(`[${path}] L3 工作包 '${name}' 与同级 '${sibName}' 语义重合（包含率 ${(overlap * 100).toFixed(0)}% ≥ 50%），应合并`);
+          break;
+        }
+      }
+    }
+
+    // ⭐ v2.16 L3 工时检查（叶子分支内）
+    if (lvl === 3) {
+      if (hours >= 160) {
+        errors.push(`[${path}] L3 工作包工时 ${hours}h 严重超标（≥160h），必须继续分解为 L4-L5`);
+      } else if (hours > 120) {
+        warnings.push(`[${path}] L3 工作包工时 ${hours}h（>120h），作为叶子节点工时较大，可考虑分解`);
+      }
     }
     return;
   }
@@ -283,32 +371,40 @@ function walkWithDepth(node, path, errors, warnings, stats, lvl, depth) {
     errors.push(`[${path}] L3 ≥24h 但没有 grandchildren`);
   }
 
-  // ⭐ v2.9/v2.10 L3 工作包大小检查
-  // 拆分规则（v2.10 用户确认）：
-  //   1. 工作包工时超 120h
-  //   2. SOW 内容中存在子项（叶子节点 children.length >= 2 或 L4 已有分解）
-  // 两个条件都满足 → 建议继续分解到 L4-L5
-  // 仅工时超 120h 但 SOW 无更细子项 → 视为可接受
   if (lvl === 3) {
+    // ⭐ v2.16 L3 工时检查（适用于叶子 + 非叶子两种情况）
     const exceeds120 = hours > 120;
-    const hasSubItems = children.length >= 2; // 已有 L4 分解
-    const shouldDecompose = exceeds120 && hasSubItems;
+    const hasSubItems = children.length >= 2;
 
     if (hours >= 160) {
       errors.push(`[${path}] L3 工作包工时 ${hours}h 严重超标（≥160h），必须继续分解为 L4-L5`);
-    } else if (shouldDecompose) {
+    } else if (exceeds120 && hasSubItems) {
       warnings.push(`[${path}] L3 工作包工时 ${hours}h（>120h）且 SOW 存在子项（${children.length} 个 L4），建议继续下钻到 L5`);
     } else if (exceeds120 && children.length < 2) {
       warnings.push(`[${path}] L3 工作包工时 ${hours}h（>120h），但 SOW 中无更细子项，可接受为单工作包`);
     }
+  }
 
-    // 子节点过多时，建议继续下钻 L5
-    if (children.length > 5) {
-      warnings.push(`[${path}] L3 工作包 '${name}' 包含 ${children.length} 个子任务（>5），建议将 L4 进一步分解为 L5`);
-    }
-    // 子节点过少时（单个 L3 即可搞定），不应再下钻 L4
-    if (children.length === 1) {
-      warnings.push(`[${path}] L3 工作包 '${name}' 只有 1 个子任务，结构过于简单，可考虑合并`);
+  // 子节点过多/过少检查（仅适用于非叶子，因为叶子走上面分支 return 了）
+  if (lvl === 3 && children.length > 5) {
+    warnings.push(`[${path}] L3 工作包 '${name}' 包含 ${children.length} 个子任务（>5），建议将 L4 进一步分解为 L5`);
+  }
+  if (lvl === 3 && children.length === 1) {
+    warnings.push(`[${path}] L3 工作包 '${name}' 只有 1 个子任务，结构过于简单，可考虑合并`);
+  }
+
+  // ⭐ v2.16 防重合检查：同一父节点下 L3 工作包名称语义不得重合（阈值 0.5）
+  // 无论 L3 是叶子还是非叶子，都需要检查（用 parentChildren 数组）
+  if (lvl === 3 && parentChildren && parentChildren.length > 1) {
+    for (const sib of parentChildren) {
+      if (sib === node) continue;
+      const sibName = getName(sib);
+      if (sibName === name) continue;
+      const overlap = computeNameOverlap(name, sibName);
+      if (overlap >= 0.5) {
+        errors.push(`[${path}] L3 工作包 '${name}' 与同级 '${sibName}' 语义重合（包含率 ${(overlap * 100).toFixed(0)}% ≥ 50%），应合并`);
+        break; // 一对即可，避免重复报错
+      }
     }
   }
 
@@ -352,6 +448,7 @@ function walkWithDepth(node, path, errors, warnings, stats, lvl, depth) {
   // 递归
   children.forEach((c) => {
     const childLvl = getLevel(c) || (lvl + 1);
-    walkWithDepth(c, `${path}/${getCode(c)}`, errors, warnings, stats, childLvl, depth + 1);
+    // ⭐ v2.16 透传 parentChildren（同级子节点数组），用于 L3 防重合检查
+    walkWithDepth(c, `${path}/${getCode(c)}`, errors, warnings, stats, childLvl, depth + 1, children);
   });
 }

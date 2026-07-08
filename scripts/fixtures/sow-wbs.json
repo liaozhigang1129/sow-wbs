@@ -1,0 +1,1861 @@
+{
+  "meta": {
+    "projectName": "【Mock】智能体项目",
+    "projectCode": "MOCK-9BATWY",
+    "projectType": "预测型/Predictive",
+    "durationWeeks": 13,
+    "durationMonths": 4,
+    "deliverables": [
+      "Prompt 工程方案",
+      "知识库构建服务",
+      "RAG 检索引擎",
+      "对话引擎服务",
+      "评测集建设清单",
+      "幻觉检测报告"
+    ],
+    "scopeBoundary": {
+      "inScope": [
+        "Prompt 工程方案",
+        "知识库构建服务",
+        "RAG 检索引擎"
+      ],
+      "outOfScope": [
+        "硬件采购",
+        "机房建设"
+      ]
+    },
+    "assumptions": [
+      "智能体相关技术栈已就绪",
+      "甲方业务专家全程参与"
+    ],
+    "constraints": [
+      "遵循等保三级要求",
+      "交付物需通过甲方 PMO 评审"
+    ],
+    "stakeholders": [
+      {
+        "role": "甲方 PMO",
+        "responsibility": "整体监管与决策"
+      },
+      {
+        "role": "乙方 PM",
+        "responsibility": "项目执行与交付"
+      }
+    ],
+    "sowLength": 909,
+    "detectedTheme": "智能体"
+  },
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "启动会",
+      "phase": "启动",
+      "weekOffset": 1,
+      "deliverable": "项目章程"
+    },
+    {
+      "id": "M2",
+      "name": "需求基线",
+      "phase": "规划",
+      "weekOffset": 4,
+      "deliverable": "需求规格说明书"
+    },
+    {
+      "id": "M3",
+      "name": "设计评审",
+      "phase": "规划",
+      "weekOffset": 8,
+      "deliverable": "总体方案设计"
+    },
+    {
+      "id": "M4",
+      "name": "开发完成",
+      "phase": "执行",
+      "weekOffset": 9,
+      "deliverable": "系统代码"
+    },
+    {
+      "id": "M5",
+      "name": "UAT 验收",
+      "phase": "测试",
+      "weekOffset": 11,
+      "deliverable": "验收报告"
+    },
+    {
+      "id": "M6",
+      "name": "上线投产",
+      "phase": "部署",
+      "weekOffset": 13,
+      "deliverable": "上线报告"
+    }
+  ],
+  "wbs": [
+    {
+      "id": "1",
+      "code": "1",
+      "name": "【Mock】智能体项目",
+      "level": 1,
+      "estimatedHours": 488,
+      "children": [
+        {
+          "id": "1",
+          "code": "1",
+          "name": "启动与立项管理",
+          "level": 2,
+          "estimatedHours": 80,
+          "children": [
+            {
+              "id": "1.1",
+              "code": "1.1",
+              "name": "Prompt 工程方案",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "Prompt 工程方案交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "1.1.1",
+                  "code": "1.1.1",
+                  "name": "Prompt 工程方案",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "Prompt 工程方案-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "Prompt 工程方案-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "Prompt 工程方案-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "Prompt 工程方案-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "Prompt 工程方案-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "1.2",
+              "code": "1.2",
+              "name": "知识库构建服务",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "知识库构建服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "1.2.1",
+                  "code": "1.2.1",
+                  "name": "知识库构建服务",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "知识库构建服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "知识库构建服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "知识库构建服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "知识库构建服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "知识库构建服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "1.3",
+              "code": "1.3",
+              "name": "RAG 检索引擎",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "RAG 检索引擎交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "1.3.1",
+                  "code": "1.3.1",
+                  "name": "RAG 检索引擎",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "RAG 检索引擎-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "RAG 检索引擎-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "RAG 检索引擎-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "RAG 检索引擎-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "RAG 检索引擎-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "1.4",
+              "code": "1.4",
+              "name": "对话引擎服务",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "对话引擎服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "1.4.1",
+                  "code": "1.4.1",
+                  "name": "对话引擎服务",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "对话引擎服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "对话引擎服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "对话引擎服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "对话引擎服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "对话引擎服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "code": "2",
+          "name": "需求与方案规划",
+          "level": 2,
+          "estimatedHours": 80,
+          "children": [
+            {
+              "id": "2.1",
+              "code": "2.1",
+              "name": "评测集建设清单",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "评测集建设清单交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "2.1.1",
+                  "code": "2.1.1",
+                  "name": "评测集建设清单",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "评测集建设清单-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "评测集建设清单-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "评测集建设清单-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "评测集建设清单-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "评测集建设清单-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "2.2",
+              "code": "2.2",
+              "name": "幻觉检测报告",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "幻觉检测报告交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "2.2.1",
+                  "code": "2.2.1",
+                  "name": "幻觉检测报告",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "幻觉检测报告-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "幻觉检测报告-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "幻觉检测报告-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "幻觉检测报告-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "幻觉检测报告-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "2.3",
+              "code": "2.3",
+              "name": "Prompt 工程方案",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "Prompt 工程方案交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "2.3.1",
+                  "code": "2.3.1",
+                  "name": "Prompt 工程方案",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "Prompt 工程方案-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "Prompt 工程方案-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "Prompt 工程方案-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "Prompt 工程方案-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "Prompt 工程方案-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "2.4",
+              "code": "2.4",
+              "name": "知识库构建服务",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "知识库构建服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "2.4.1",
+                  "code": "2.4.1",
+                  "name": "知识库构建服务",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "知识库构建服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "知识库构建服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "知识库构建服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "知识库构建服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "知识库构建服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "code": "3",
+          "name": "设计与构建管理",
+          "level": 2,
+          "estimatedHours": 88,
+          "children": [
+            {
+              "id": "3.1",
+              "code": "3.1",
+              "name": "RAG 检索引擎",
+              "level": 3,
+              "estimatedHours": 22,
+              "deliverable": "RAG 检索引擎交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "3.1.1",
+                  "code": "3.1.1",
+                  "name": "RAG 检索引擎",
+                  "level": 4,
+                  "estimatedHours": 22,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "RAG 检索引擎-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "RAG 检索引擎-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "RAG 检索引擎-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 6,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "RAG 检索引擎-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "RAG 检索引擎-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "3.2",
+              "code": "3.2",
+              "name": "对话引擎服务",
+              "level": 3,
+              "estimatedHours": 22,
+              "deliverable": "对话引擎服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "3.2.1",
+                  "code": "3.2.1",
+                  "name": "对话引擎服务",
+                  "level": 4,
+                  "estimatedHours": 22,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "对话引擎服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "对话引擎服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "对话引擎服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 6,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "对话引擎服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "对话引擎服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "3.3",
+              "code": "3.3",
+              "name": "评测集建设清单",
+              "level": 3,
+              "estimatedHours": 22,
+              "deliverable": "评测集建设清单交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "3.3.1",
+                  "code": "3.3.1",
+                  "name": "评测集建设清单",
+                  "level": 4,
+                  "estimatedHours": 22,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "评测集建设清单-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "评测集建设清单-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "评测集建设清单-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 6,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "评测集建设清单-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "评测集建设清单-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "3.4",
+              "code": "3.4",
+              "name": "幻觉检测报告",
+              "level": 3,
+              "estimatedHours": 22,
+              "deliverable": "幻觉检测报告交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "3.4.1",
+                  "code": "3.4.1",
+                  "name": "幻觉检测报告",
+                  "level": 4,
+                  "estimatedHours": 22,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "幻觉检测报告-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "幻觉检测报告-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "幻觉检测报告-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 6,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "幻觉检测报告-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "幻觉检测报告-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "code": "4",
+          "name": "测试与质量保障",
+          "level": 2,
+          "estimatedHours": 80,
+          "children": [
+            {
+              "id": "4.1",
+              "code": "4.1",
+              "name": "Prompt 工程方案",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "Prompt 工程方案交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "4.1.1",
+                  "code": "4.1.1",
+                  "name": "Prompt 工程方案",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "Prompt 工程方案-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "Prompt 工程方案-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "Prompt 工程方案-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "Prompt 工程方案-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "Prompt 工程方案-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4.2",
+              "code": "4.2",
+              "name": "知识库构建服务",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "知识库构建服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "4.2.1",
+                  "code": "4.2.1",
+                  "name": "知识库构建服务",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "知识库构建服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "知识库构建服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "知识库构建服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "知识库构建服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "知识库构建服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4.3",
+              "code": "4.3",
+              "name": "RAG 检索引擎",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "RAG 检索引擎交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "4.3.1",
+                  "code": "4.3.1",
+                  "name": "RAG 检索引擎",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "RAG 检索引擎-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "RAG 检索引擎-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "RAG 检索引擎-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "RAG 检索引擎-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "RAG 检索引擎-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4.4",
+              "code": "4.4",
+              "name": "对话引擎服务",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "对话引擎服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "4.4.1",
+                  "code": "4.4.1",
+                  "name": "对话引擎服务",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "对话引擎服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "对话引擎服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "对话引擎服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "对话引擎服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "对话引擎服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "code": "5",
+          "name": "部署与上线服务",
+          "level": 2,
+          "estimatedHours": 80,
+          "children": [
+            {
+              "id": "5.1",
+              "code": "5.1",
+              "name": "评测集建设清单",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "评测集建设清单交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "5.1.1",
+                  "code": "5.1.1",
+                  "name": "评测集建设清单",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "评测集建设清单-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "评测集建设清单-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "评测集建设清单-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "评测集建设清单-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "评测集建设清单-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "5.2",
+              "code": "5.2",
+              "name": "幻觉检测报告",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "幻觉检测报告交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "5.2.1",
+                  "code": "5.2.1",
+                  "name": "幻觉检测报告",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "幻觉检测报告-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "幻觉检测报告-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "幻觉检测报告-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "幻觉检测报告-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "幻觉检测报告-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "5.3",
+              "code": "5.3",
+              "name": "Prompt 工程方案",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "Prompt 工程方案交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "5.3.1",
+                  "code": "5.3.1",
+                  "name": "Prompt 工程方案",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "Prompt 工程方案-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "Prompt 工程方案-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "Prompt 工程方案-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "Prompt 工程方案-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "Prompt 工程方案-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "5.4",
+              "code": "5.4",
+              "name": "知识库构建服务",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "知识库构建服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "5.4.1",
+                  "code": "5.4.1",
+                  "name": "知识库构建服务",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "知识库构建服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "知识库构建服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "知识库构建服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "知识库构建服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "知识库构建服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "code": "6",
+          "name": "项目收尾与移交管理",
+          "level": 2,
+          "estimatedHours": 80,
+          "children": [
+            {
+              "id": "6.1",
+              "code": "6.1",
+              "name": "RAG 检索引擎",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "RAG 检索引擎交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "6.1.1",
+                  "code": "6.1.1",
+                  "name": "RAG 检索引擎",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "RAG 检索引擎-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "RAG 检索引擎-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "RAG 检索引擎-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "RAG 检索引擎-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "RAG 检索引擎-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "6.2",
+              "code": "6.2",
+              "name": "对话引擎服务",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "对话引擎服务交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "6.2.1",
+                  "code": "6.2.1",
+                  "name": "对话引擎服务",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "对话引擎服务-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "对话引擎服务-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "对话引擎服务-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "对话引擎服务-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "对话引擎服务-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "6.3",
+              "code": "6.3",
+              "name": "评测集建设清单",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "评测集建设清单交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "6.3.1",
+                  "code": "6.3.1",
+                  "name": "评测集建设清单",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "评测集建设清单-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "评测集建设清单-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "评测集建设清单-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "评测集建设清单-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "评测集建设清单-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "6.4",
+              "code": "6.4",
+              "name": "幻觉检测报告",
+              "level": 3,
+              "estimatedHours": 20,
+              "deliverable": "幻觉检测报告交付物",
+              "owner": "DEV",
+              "sowEvidence": "SOW 涉及相关需求",
+              "children": [
+                {
+                  "id": "6.4.1",
+                  "code": "6.4.1",
+                  "name": "幻觉检测报告",
+                  "level": 4,
+                  "estimatedHours": 20,
+                  "children": [
+                    {
+                      "code": "L5-1",
+                      "name": "幻觉检测报告-方案评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 1 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-2",
+                      "name": "幻觉检测报告-设计评审纪要",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "评审纪要",
+                      "owner": "AR",
+                      "sowEvidence": "SOW 第 2 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-3",
+                      "name": "幻觉检测报告-编码实现模块",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "代码包",
+                      "owner": "DEV",
+                      "sowEvidence": "SOW 第 3 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-4",
+                      "name": "幻觉检测报告-单元测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 4 节相关需求",
+                      "children": []
+                    },
+                    {
+                      "code": "L5-5",
+                      "name": "幻觉检测报告-集成测试报告",
+                      "level": 5,
+                      "estimatedHours": 4,
+                      "deliverable": "测试报告",
+                      "owner": "QA",
+                      "sowEvidence": "SOW 第 5 节相关需求",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

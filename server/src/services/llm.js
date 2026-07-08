@@ -118,11 +118,19 @@ export async function callLLMFull(cfg, prompt, log) {
  * 测试连通性
  */
 export async function testLLM(cfg) {
-  if (!cfg?.apiKey) return { ok: false, message: '缺少 API Key', latencyMs: 0 };
+  // ⭐ v3.x: 空 / 占位 → 走 env 兜底
+  let effective = cfg;
+  if (!cfg?.apiKey || cfg.apiKey === '__system_default__') {
+    try {
+      const { normalizeLLMConfig } = await import('./llmDefault.js');
+      effective = normalizeLLMConfig({ ...(cfg || {}), apiKey: '' });
+    } catch {}
+  }
+  if (!effective?.apiKey) return { ok: false, message: '缺少 API Key', latencyMs: 0 };
   const start = Date.now();
   try {
-    if (cfg.provider === 'claude') return await testClaude(cfg, start);
-    return await testOpenAICompatible(cfg, start);
+    if (effective.provider === 'claude') return await testClaude(effective, start);
+    return await testOpenAICompatible(effective, start);
   } catch (err) {
     return { ok: false, message: err.message || String(err), latencyMs: Date.now() - start };
   }
@@ -178,17 +186,25 @@ async function callOpenAIFull(cfg, prompt, log) {
   // ⭐ 修复：baseUrl 已含 /v1 时不再重复追加
   const url = cleanBase.endsWith('/v1') ? `${cleanBase}/chat/completions` : `${cleanBase}/v1/chat/completions`;
 
+  // ⭐ v2.16 优化：拆分 system / user 启用 prompt cache
+  // system = 固定规则（可被 DeepSeek 缓存，价格 1/10）
+  // user   = 当次 SOW 上下文（每次变）
+  const systemPrompt = '你是 PMO 顾问，严格遵守 WBS 规范。\n\n[OUTPUT_FORMAT]\n1. 严格输出合法 JSON，禁止任何 Markdown 围栏（```）、禁止寒暄、禁止解释、禁止换行说明\n2. JSON 结构必须完整闭合，最后一个 } 后禁止任何字符\n3. 字段缺失时使用 null 或省略，禁止空字符串占位\n4. 输出过长时优先保证 JSON 结��和叶子节点完整，可省略 description/sowRef 等次要字段\n\n[OWNER_POOL] owner 只能是以下角色之一：PM / BA / SA / Dev / QA / TL / DATA / AR / SR';
+
+  // ⭐ v2.16 优化：max_tokens 默认 4000（原 16000 易爆 402 且浪费）
+  const finalMaxTokens = Number(maxTokens) || 4000;
+
   const { resp, latency, attempt } = await fetchWithRetry(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
       model: model || 'gpt-4o',
       temperature,
-      max_tokens: Number(maxTokens) || 16000,
+      max_tokens: finalMaxTokens,
       // ⭐ Claude 不支持 response_format，仅在非 Claude 模型时注入
       ...(model?.includes('claude') ? {} : { response_format: { type: 'json_object' } }),
       messages: [
-        { role: 'system', content: '你是一位严格遵守 WBS Master Prompt v2.3 规范的 PMO 顾问。严格输出合法 JSON（无任何 Markdown 围栏、无寒暄、无解释）。如果输出过长，请优先保证 JSON 结构完整、子节点充分，但允许省略 deliverable/sowRef 等次要字段。' },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt },
       ],
     }),
@@ -205,6 +221,16 @@ async function callOpenAIFull(cfg, prompt, log) {
   }
 
   const data = await resp.json();
+  // ⭐ DEBUG: hexai 兼容性问题排查时打印原始响应（TODO 后续移除）
+  console.log(`[llm][debug] body keys=${Object.keys(data).join(',')}, model=${data?.model}, choices.length=${data?.choices?.length}`);
+  if (data?.choices?.[0]?.message) {
+    console.log(`[llm][debug] choice.message keys=${Object.keys(data.choices[0].message).join(',')}`);
+    console.log(`[llm][debug] content first 300 chars=${String(data.choices[0].message.content).slice(0,300)}`);
+  } else if (data?.choices?.[0]) {
+    console.log(`[llm][debug] choice keys=${Object.keys(data.choices[0]).join(',')}`);
+  } else {
+    console.log(`[llm][debug] raw body first 500 chars=${JSON.stringify(data).slice(0,500)}`);
+  }
   const choice = data?.choices?.[0];
   const finishReason = choice?.finish_reason;
   // ⭐ v2.6 改进：兼容多种截断标记（hexai 中转可能用 "length" / "max_tokens" / "stop"）
@@ -223,14 +249,20 @@ async function callClaudeFull(cfg, prompt, log) {
   if (!apiKey) throw new Error('缺少 API Key');
   const url = `${(baseUrl || 'https://api.anthropic.com').replace(/\/+$/, '')}/v1/messages`;
 
+  // ⭐ v2.16 优化：Claude system 提示词同步增强（与 OpenAI 一致）
+  const claudeSystem = '你是 PMO 顾问，严格遵守 WBS 规范。\n\n[OUTPUT_FORMAT]\n1. 严格输出合法 JSON，禁止任何 Markdown 围栏（```）、禁止寒暄、禁止解释、禁止换行说明\n2. JSON 结构必须完整闭合，最后一个 } 后禁止任何字符\n3. 字段缺失时使用 null 或省略，禁止空字符串占位\n4. 输出过长时优先保证 JSON 结构和叶子节点完整，可省略 description/sowRef 等次要字段\n\n[OWNER_POOL] owner 只能是以下角色之一：PM / BA / SA / Dev / QA / TL / DATA / AR / SR';
+
+  // ⭐ v2.16 优化：max_tokens 默认 8000（Claude 限��更高）
+  const finalMaxTokens = Number(maxTokens) || 8000;
+
   const { resp, latency, attempt } = await fetchWithRetry(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model: model || 'claude-3-5-sonnet-20241022',
-      max_tokens: Number(maxTokens) || 20000,
+      max_tokens: finalMaxTokens,
       temperature,
-      system: '你是一位严格遵守 WBS Master Prompt v2.3 规范的 PMO 顾问。严格输出合法 JSON（无任何 Markdown 围栏、无寒暄、无解释）。如果输出过长，请优先保证 JSON 结构完整、子节点充分，但允许省略 deliverable/sowRef 等次要字段。',
+      system: claudeSystem,
       messages: [{ role: 'user', content: prompt }],
     }),
   }, {

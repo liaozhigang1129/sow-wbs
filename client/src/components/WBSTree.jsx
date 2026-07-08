@@ -38,11 +38,15 @@ const PHASE_COLORS = [
   'border-l-red-400',
 ];
 
-function TreeNode({ node, depth = 0, expanded, onToggle, search, onLocateInSow }) {
+function TreeNode({ node, depth = 0, expanded, onToggle, search, onLocateInSow, onExpandL3, expandingL3, fullSowText, llmConfig }) {
   const hasChildren = node.children && node.children.length > 0;
   // 关键：用 id || code 作为展开 key，保证每个节点都有唯一稳定的 key
   const nodeKey = node.id || node.code || `node-${depth}-${Math.random()}`;
   const isOpen = expanded[nodeKey] !== false;
+
+  // ⭐ v3.0: L3 节点 + 无子节点 + 未展开 → 标记为可按需展开
+  const isL3Expandable = depth === 2 && !hasChildren;
+  const isExpanding = expandingL3 === nodeKey;
 
   const matchesSearch =
     search &&
@@ -78,16 +82,49 @@ function TreeNode({ node, depth = 0, expanded, onToggle, search, onLocateInSow }
       >
         {hasChildren ? (
           <button
-            onClick={() => onToggle(nodeKey)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle(nodeKey);
+            }}
             className="w-4 h-4 flex items-center justify-center text-slate-400 hover:text-slate-700 mt-0.5 flex-shrink-0"
             title={`${isOpen ? '收起' : '展开'} (L${depth + 1})`}
           >
             {isOpen ? '▾' : '▸'}
           </button>
+        ) : isL3Expandable ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onExpandL3 && !isExpanding) {
+                onExpandL3(node, fullSowText, llmConfig);
+              }
+            }}
+            disabled={isExpanding}
+            className={`w-4 h-4 flex items-center justify-center mt-0.5 flex-shrink-0 rounded transition-colors
+              ${isExpanding
+                ? 'text-amber-500 cursor-wait animate-pulse'
+                : 'text-amber-600 hover:text-amber-800 hover:bg-amber-100 cursor-pointer'}`}
+            title={isExpanding ? '正在展开 L4-L5…' : '点击按需展开 L4-L5（调 LLM 实时生成）'}
+          >
+            {isExpanding ? '⏳' : '🔽'}
+          </button>
         ) : (
           <span className="w-4 flex-shrink-0" />
         )}
-        <div className="flex-1 min-w-0">
+        <div
+          className="flex-1 min-w-0 cursor-pointer"
+          onClick={(e) => {
+            // ⭐ v2.15: 点击节点标题区域直接定位 SOW（折叠 + 跳转）
+            if (node.sowEvidence && onLocateInSow) {
+              onLocateInSow(node.sowEvidence);
+            }
+            // 同时保留折叠行为（如果有子节点）
+            if (hasChildren) {
+              onToggle(nodeKey);
+            }
+          }}
+          title={node.sowEvidence && onLocateInSow ? '点击定位到 SOW 文档（+ 折叠/展开）' : ''}
+        >
           <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
             {/* 深度徽章：L1/L2/L3/L4/L5 */}
             <span
@@ -146,7 +183,7 @@ function TreeNode({ node, depth = 0, expanded, onToggle, search, onLocateInSow }
           )}
         </div>
       </div>
-      {hasChildren && isOpen && (
+            {hasChildren && isOpen && (
         <ul
           className={`ml-4 pl-2 border-l-2 ${
             depth === 0 ? 'border-brand-200' :
@@ -163,15 +200,35 @@ function TreeNode({ node, depth = 0, expanded, onToggle, search, onLocateInSow }
               onToggle={onToggle}
               search={search}
               onLocateInSow={onLocateInSow}
+              onExpandL3={onExpandL3}
+              expandingL3={expandingL3}
+              fullSowText={fullSowText}
+              llmConfig={llmConfig}
             />
           ))}
         </ul>
+      )}
+      {/* ⭐ v3.0: L3 无子节点 → 显示「按需展开 L4-L5」提示条 */}
+      {isL3Expandable && onExpandL3 && (
+        <div
+          className="ml-8 mt-1 mb-2 px-2 py-1.5 text-[11px] text-amber-700 bg-amber-50/60 border border-dashed border-amber-300 rounded cursor-pointer hover:bg-amber-100/80 hover:border-amber-400 transition-colors flex items-center gap-1.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isExpanding) onExpandL3(node, fullSowText, llmConfig);
+          }}
+          title="点击按需展开 L4-L5"
+        >
+          <span>{isExpanding ? '⏳' : '🔽'}</span>
+          <span className="font-medium">
+            {isExpanding ? '正在展开 L4-L5，请稍候…' : '点击按需展开 L4-L5（AI 实时生成）'}
+          </span>
+        </div>
       )}
     </li>
   );
 }
 
-export default function WBSTree({ wbs, onLocateInSow }) {
+export default function WBSTree({ wbs, onLocateInSow, onExpandL3, expandingL3, fullSowText, llmConfig }) {
   const [expanded, setExpanded] = useState({});
   const [search, setSearch] = useState('');
   const [filterPhase, setFilterPhase] = useState('all');
@@ -385,7 +442,16 @@ export default function WBSTree({ wbs, onLocateInSow }) {
         )}
 
         {/* WP 主体卡片 */}
-        <div className="bg-white border border-slate-200 rounded-md p-3 hover:shadow-md hover:border-brand-300 transition-all">
+        <div
+          className="bg-white border border-slate-200 rounded-md p-3 hover:shadow-md hover:border-brand-300 transition-all cursor-pointer"
+          onClick={() => {
+            // ⭐ v2.15: 点击 WP 卡片任意位置直接定位 SOW
+            if (wp.sowEvidence && onLocateInSow) {
+              onLocateInSow(wp.sowEvidence);
+            }
+          }}
+          title={wp.sowEvidence && onLocateInSow ? '点击定位到 SOW 文档' : ''}
+        >
           <div className="flex items-start justify-between gap-2 mb-1.5">
             <div className="flex items-center flex-wrap gap-2 flex-1 min-w-0">
               <span className="badge bg-brand-600 text-white text-[10px] font-bold flex-shrink-0">WP</span>
@@ -648,6 +714,10 @@ export default function WBSTree({ wbs, onLocateInSow }) {
                     onToggle={toggle}
                     search={search}
                     onLocateInSow={onLocateInSow}
+                    onExpandL3={onExpandL3}
+                    expandingL3={expandingL3}
+                    fullSowText={fullSowText}
+                    llmConfig={llmConfig}
                   />
                 </div>
               ))}

@@ -1,0 +1,48 @@
+name: sow-wbs
+
+# 单体 Compose：后端 + 前端（由后端托管）打包在一个镜像里
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sow-wbs:latest
+    container_name: sow-wbs
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-8787}:8787"
+    environment:
+      # ===== 服务端口 =====
+      PORT: 8787
+      HOST: 0.0.0.0
+      NODE_ENV: production
+
+      # ===== ⭐ 兜底 LLM 配置（hexai 中转 / OpenAI 兼容） =====
+      # 容器内没配这些时，前端会回退到 mock；
+      # 配上后即可"开箱即用"——前端无需手动填 API Key。
+      HEXAI_BASE_URL: ${HEXAI_BASE_URL:-https://crs.hexai.cn/api/v1}
+      HEXAI_API_KEY: ${HEXAI_API_KEY:-}
+      HEXAI_MODEL: ${HEXAI_MODEL:-claude-sonnet-4-20250514}
+
+      # ===== 可选：OpenAI / Anthropic 官方 fallback =====
+      # LLM_OPENAI_API_KEY: ${LLM_OPENAI_API_KEY:-}
+      # LLM_CLAUDE_API_KEY: ${LLM_CLAUDE_API_KEY:-}
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+
+      # ===== v2.19: 公开 API v1 鉴权（多个用英文逗号分隔；留空 = 开发模式免鉴权） =====
+      # WBS_API_KEYS: ${WBS_API_KEYS:-}
+      # WBS_RATE_LIMIT_PER_MIN: ${WBS_RATE_LIMIT_PER_MIN:-60}
+
+      # ===== v2.19: MCP HTTP+SSE 鉴权 =====
+      # MCP_API_KEY: ${MCP_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8787/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    # 如果需要把 .env 挂进来：取消下一行注释
+    # env_file:
+    #   - .env
+    # volumes:
+    #   - ./uploads:/app/uploads

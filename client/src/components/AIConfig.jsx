@@ -1,12 +1,26 @@
 // AI 配置面板
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { loadConfig, saveConfig, PROVIDER_PRESETS } from '../utils/config.js';
-import { testLLM } from '../utils/api.js';
+import { testLLM, fetchDefaultLLM } from '../utils/api.js';
 
 export default function AIConfig({ onClose, onSaved }) {
   const [cfg, setCfg] = useState(loadConfig());
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
+  const [systemDefault, setSystemDefault] = useState(null);
+
+  // ⭐ v3.x: 进入面板时拉一次系统兜底配置
+  useEffect(() => {
+    let cancelled = false;
+    fetchDefaultLLM()
+      .then((d) => {
+        if (!cancelled && d && d.ok) setSystemDefault(d);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const update = (k, v) => {
     setCfg((c) => ({ ...c, [k]: v }));
@@ -21,6 +35,19 @@ export default function AIConfig({ onClose, onSaved }) {
       provider: p,
       baseUrl: preset.baseUrl,
       model: preset.models[0],
+    }));
+    setTestResult(null);
+  };
+
+  // ⭐ v3.x: 一键应用系统兜底（只填 baseUrl/model；apiKey 留空 → 后端会用 env）
+  const useSystemDefault = () => {
+    if (!systemDefault) return;
+    setCfg((c) => ({
+      ...c,
+      provider: systemDefault.provider,
+      baseUrl: systemDefault.baseUrl,
+      model: systemDefault.model,
+      apiKey: '',
     }));
     setTestResult(null);
   };
@@ -60,6 +87,41 @@ export default function AIConfig({ onClose, onSaved }) {
           </button>
         </div>
         <div className="p-5 space-y-4">
+          {/* ⭐ v3.x: 系统兜底提示 + 一键应用 */}
+          {systemDefault && (
+            <div className="rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-700">🛡️ 系统兜底 LLM</span>
+                {systemDefault.apiKeyPresent ? (
+                  <span className="text-emerald-600 text-xs">已就绪</span>
+                ) : (
+                  <span className="text-amber-600 text-xs">未配 API Key</span>
+                )}
+              </div>
+              <div className="text-xs text-slate-600 mt-1">
+                {systemDefault.label} · <span className="font-mono">{systemDefault.model}</span>
+                <br />
+                baseUrl: <span className="font-mono">{systemDefault.baseUrl}</span>
+              </div>
+              <div className="mt-2 flex gap-2">
+                <button
+                  type="button"
+                  className="text-xs px-2 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
+                  onClick={useSystemDefault}
+                  disabled={!systemDefault.apiKeyPresent}
+                  title={systemDefault.apiKeyPresent ? '填入 system default 的 baseUrl/model（apiKey 留空让后端用 env）' : '需要 .env 设置 HEXAI_API_KEY'}
+                >
+                  一键应用兜底
+                </button>
+                <span className="text-xs text-slate-500 self-center">
+                  {systemDefault.apiKeyPresent
+                    ? '不填 API Key 也可由后端 .env 自动兜底'
+                    : '联系管理员在 .env 设置 HEXAI_API_KEY'}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="label">模型厂商</label>
             <select
@@ -119,7 +181,7 @@ export default function AIConfig({ onClose, onSaved }) {
               autoComplete="off"
             />
             <div className="text-xs text-slate-400 mt-1">
-              仅保存在浏览器 localStorage，不上传服务器。
+              仅保存在浏览器 localStorage，不上传服务器。留空时生成会优先使用「🛡️ 系统兜底 LLM」（.env 已配 HEXAI_API_KEY 的情况下）。
             </div>
           </div>
 

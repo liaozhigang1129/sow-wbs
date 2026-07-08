@@ -50,8 +50,11 @@ router.post('/', async (req, res) => {
   const log = [];
   const push = (level, stage, msg, data) => log.push({ t: ts(), level, stage, msg, data });
 
+  const enableL4L5 = req.body?.options?.enableL4L5 !== false;
+
   push('info', 'start', '🧪 进入【模拟生成】模式，不调用真实 LLM');
   push('info', 'input', 'SOW 已接收', { length: (req.body?.sowText || '').length });
+  push('info', 'config', `📐 分解粒度: ${enableL4L5 ? 'L1-L5 完整' : 'L1-L3 仅工作包'}`);
   await sleep(150);
 
   push('info', 'prompt', '📝 模拟组装 Prompt', { model: 'mock', sowChars: 1234 });
@@ -73,10 +76,25 @@ router.post('/', async (req, res) => {
   push('info', 'enrich', '🧱 节点补全完成', { autoFilled: 3 });
   push('info', 'ok', '🎉 模拟生成完成', { totalMs: 1500 });
 
+  const wbs = fakeWBS();
+  // 模拟模式：enableL4L5=false 时清空 L3 以下的 children
+  if (!enableL4L5) {
+    function strip(n) {
+      if (n.children) {
+        n.children = n.children.map((c) => {
+          if (c.level >= 3) return { ...c, children: [] };
+          return strip(c);
+        });
+      }
+      return n;
+    }
+    wbs.wbs = wbs.wbs.map(strip);
+  }
+
   res.json({
     ok: true,
     mock: true,
-    wbs: fakeWBS(),
+    wbs,
     log,
     stats: { totalNodes: 32, totalHours: 1312, errors: 0, warnings: 1 },
   });

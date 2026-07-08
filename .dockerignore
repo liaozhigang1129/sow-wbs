@@ -1,0 +1,35 @@
+# 不进镜像的本地文件
+node_modules
+**/node_modules
+.git
+.gitignore
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log
+
+# 构建期会重新生成
+dist
+.cache
+coverage
+
+# 本地配置 / 凭据（用环境变量或 mount 注入）
+.env
+.env.local
+.env.*.local
+
+# 测试 & 文档
+test
+test/**
+docs
+docs/**
+*.md
+!README.md
+
+# MCP 配置（不在容器里跑）
+.mcp.json
+.mcp
+.vscode
+.idea

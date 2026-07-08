@@ -62,14 +62,14 @@ cd client && npm install && cd ..
 # 终端 1：启动后端 (http://localhost:8787)
 npm run dev:server
 
-# 终端 2：启动前端 (http://localhost:5173)
+# 终端 2：启动前端 (http://localhost:5174)
 npm run dev:client
 
 # 或一键启动（同时运行）
 npm run dev
 ```
 
-开发模式下，访问 http://localhost:5173 即可（前端自带 `/api` 代理到 8787）。
+开发模式下，访问 http://localhost: 即可（前端自带 `/api` 代理到 8787）。
 
 ### 3. 生产构建 + 一体化部署
 

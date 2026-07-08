@@ -43,15 +43,37 @@ export const uploadSOW = (file) => {
   return postFile('/api/upload', fd);
 };
 
-export const generateWBS = (sowText, llmConfig) =>
-  postJSON('/api/generate', { sowText, llmConfig });
+export const generateWBS = (sowText, llmConfig, options = {}) =>
+  postJSON('/api/generate', { sowText, llmConfig, options });
 
-export const mockGenerate = (sowText) =>
-  postJSON('/api/mock-generate', { sowText });
+export const mockGenerate = (sowText, options = {}) =>
+  postJSON('/api/mock-generate', { sowText, options });
+
+/**
+ * ⭐ v3.0: 按需展开单个 L3 为 L4-L5
+ * 入参: l3 {code,name,estimatedHours,owner,deliverable,sowEvidence}
+ *       sowContext (可选) / sowText (可选) / llmConfig
+ * 返回: { l3: { ...原节点, children:[L4/L5] }, log, meta }
+ */
+export const expandL3 = (l3, { sowContext, sowText, llmConfig } = {}) =>
+  postJSON('/api/expand-l3', { l3, sowContext, sowText, llmConfig });
 
 export const validateWBS = (wbs) => postJSON('/api/validate', { wbs });
 
 export const testLLM = (llmConfig) => postJSON('/api/test-llm', { llmConfig });
+
+/**
+ * ⭐ v3.x: 拉取系统兜底 LLM 配置
+ * 后端从 .env / 系统默认解析；只返回元信息，apiKey 永远不返回明文
+ * 典型用法：用户没手动配 llmConfig 时，前端拉一次看看有没有兜底
+ */
+export async function fetchDefaultLLM() {
+  const resp = await fetch('/api/llm-default');
+  if (!resp.ok) {
+    return { ok: false, error: `HTTP ${resp.status}` };
+  }
+  return resp.json();
+}
 
 export async function exportFile(format, wbs) {
   const resp = await fetch('/api/export', {
